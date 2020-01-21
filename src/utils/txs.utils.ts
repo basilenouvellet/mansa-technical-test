@@ -11,7 +11,7 @@ export const computeAverageAmount = (
 
 export const computeMinMaxBalanceBackwards = (
     [min, max, balance]: number[],
-    tx: TxDto
+    tx: TxDto,
 ) => {
     // we start with the current aggregated balance
     // and compute the balance before the current transaction at every step
@@ -23,11 +23,11 @@ export const computeMinMaxBalanceBackwards = (
     const updatedMax = Math.max(max, balance);
 
     return [updatedMin, updatedMax, previousBalance];
-}
+};
 
 export const filterLessThanSixMonthsTxs = (mostRecentTxDate: Date) => (tx: TxDto) => {
     const txDate = new Date(tx.timestamp);
-    
+
     // `+date` gives the date in milliseconds
     return +txDate > (+mostRecentTxDate - SIX_MONTHS_IN_MILLISECONDS);
 };
@@ -40,4 +40,4 @@ export const sortAscTxsByTimestamp = (a: TxDto, b: TxDto) => {
 
     // `+date` gives the date in milliseconds
     return +bDate - +aDate;
-}
+};

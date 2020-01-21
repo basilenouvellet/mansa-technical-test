@@ -33,7 +33,7 @@ export class AppService {
     return this._fetchJson('/accounts');
   }
 
-  fetchAllTxs(anyAccountId: string): Promise<{ [account_id: string]: TxDto[] }> {
+  fetchAllTxs(anyAccountId: string): Promise<{ [accountId: string]: TxDto[] }> {
     return this._fetchJson(`/accounts/${anyAccountId}/transactions?all=true`);
   }
 
@@ -55,7 +55,7 @@ export class AppService {
   getMinMaxBalance(allTxsSorted: TxDto[], accounts: AccountDto[]): number[] {
     const currentBalanceAggregated = accounts.reduce((acc, account) => acc + account.current, 0);
 
-    const [minBalance, maxBalance, _initial_balance] = allTxsSorted.reduce(
+    const [minBalance, maxBalance] = allTxsSorted.reduce(
       computeMinMaxBalanceBackwards,
       [0, 0, currentBalanceAggregated],
     );
