@@ -10,4 +10,9 @@ export class AppController {
   async getAnswer(): Promise<AnswerDto> {
     return await this.appService.getAnswer();
   }
+
+  @Get('answer/verify')
+  async getAnswerVerify(): Promise<{ 'answer': string }> {
+    return await this.appService.getAnswerVerify();
+  }
 }

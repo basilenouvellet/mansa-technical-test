@@ -24,9 +24,20 @@ export class AppService {
     return {
       '6_month_average_income': this.getLastSixMonthsAverageIncome(allTxsSorted),
       '3_years_activity': this.getThreeYearsOfActivity(allTxsSorted),
-      min_balance,
       max_balance,
+      min_balance,
     };
+  }
+
+  // async getAnswerVerify(): Promise<{ 'answer': string }> {
+  async getAnswerVerify(): Promise<any> {
+    const answer = await this.getAnswer();
+
+    return await this._fetchJson('/answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(answer),
+    });
   }
 
   fetchAccounts(): Promise<AccountDto[]> {
@@ -91,8 +102,8 @@ export class AppService {
     return userActivityDurationInMilliseconds > THREE_YEARS_IN_MILLISECONDS;
   }
 
-  async _fetchJson(endpoint: string): Promise<any> {
-    const res = await fetch(BASE_URL + endpoint);
+  async _fetchJson(endpoint: string, ...args): Promise<any> {
+    const res = await fetch(BASE_URL + endpoint, ...args);
     return await res.json();
   }
 }
