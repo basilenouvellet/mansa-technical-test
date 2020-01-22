@@ -12,7 +12,7 @@ export class AppController {
   }
 
   @Get('answer/verify')
-  async getAnswerVerify(): Promise<{ 'answer': string }> {
+  async getAnswerVerify(): Promise<{ answer: string }> {
     return await this.appService.getAnswerVerify();
   }
 }
