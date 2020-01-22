@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { answerExpected, verifiedAnswerExpected } from '../test/expected';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -15,8 +17,14 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return the correct answer', async () => {
+      const answer = await appController.getAnswer();
+      expect(answer).toStrictEqual(answerExpected);
+    });
+
+    it('should verify the correct answer', async () => {
+      const verified_answer = await appController.getAnswerVerify();
+      expect(verified_answer).toStrictEqual(verifiedAnswerExpected);
     });
   });
 });
