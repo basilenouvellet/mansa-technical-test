@@ -1,3 +1,26 @@
+# Mansa - Technical test
+
+This is my project for the [Backend Engineer technical test at Mansa](https://github.com/MansaGroup/kanedama).
+
+It is essentially a NestJS API fetching financial data from another API, and doing some computation before returning the answer to the user.
+
+It exposes only 2 endpoints:
+
+Endpoint | Data | Method
+------ | ------ | ------
+`/answer` | Get the answer to the engineering problem asked by Mansa | [GET]
+`/answer/verify` | Get the answer, post it to the Mansa API endpoint responsible for checking the correctness of the solution and return the response | [GET]
+
+This project was bootstrapped using the [NestJS CLI](https://docs.nestjs.com/cli/overview#basic-workflow).
+
+## TODO
+
+- Handle potential fetch errors with `try{} catch{}`
+- Write more specific tests
+- See if there is a way to parallelize computations for each answer fields
+
+---
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
