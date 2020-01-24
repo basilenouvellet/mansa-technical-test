@@ -1,5 +1,8 @@
 import { TxDto } from '../dtos';
-import { isDurationLessThanSixMonths } from './date.utils';
+import {
+  isDurationLessThanSixMonths,
+  convertDateObjectToDate,
+} from './date.utils';
 
 export const computeAverageAmount = (
   acc: number,
@@ -31,10 +34,15 @@ export const filterLessThanSixMonthsTxs = (mostRecentTxDate: Date) => (tx: TxDto
 
 export const filterPositiveTxs = (tx: TxDto) => tx.amount > 0;
 
-export const sortAscTxsByTimestamp = (a: TxDto, b: TxDto) => {
+export const filterTxsOfDate = (day: string) => tx => convertDateObjectToDate(new Date(tx.timestamp)) === day;
+
+export const sortTxsByTimestamp = (order: 'asc' | 'desc') => (a: TxDto, b: TxDto) => {
   const aDate = new Date(a.timestamp);
   const bDate = new Date(b.timestamp);
 
   // `+date` gives the date in milliseconds
-  return +bDate - +aDate;
+  switch (order) {
+    case 'asc': return +bDate - +aDate;
+    case 'desc': return +aDate - +bDate;
+  }
 };

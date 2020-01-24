@@ -30,4 +30,18 @@ describe('AppController (e2e)', () => {
       .expect(200)
       .expect(verifiedAnswerExpected);
   });
+
+  it('/oo/answer (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/oo/answer')
+      .expect(200)
+      .expect(answerExpected);
+  });
+
+  it('/oo/answer/verify (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/oo/answer/verify')
+      .expect(200)
+      .expect(verifiedAnswerExpected);
+  });
 });

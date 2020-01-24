@@ -4,9 +4,13 @@ const ONE_DAY_IN_MILLISECONDS = 86400000;
 const SIX_MONTHS_IN_MILLISECONDS = (365 / 2) * ONE_DAY_IN_MILLISECONDS;
 const THREE_YEARS_IN_MILLISECONDS = 3 * 2 * SIX_MONTHS_IN_MILLISECONDS;
 
+export const convertTimestampToDate = (timestamp: string) => {
+    return timestamp.match(EXTRACT_DATE_FROM_ISO_STRING_REGEXP)[0];
+};
+
 export const convertDateObjectToDate = (dateObject: Date) => {
     const isoString = dateObject.toISOString();
-    return isoString.match(EXTRACT_DATE_FROM_ISO_STRING_REGEXP)[0];
+    return convertTimestampToDate(isoString);
 };
 
 export const addDaysToDate = (days: number, date: string) => {
@@ -26,4 +30,21 @@ export const isDurationLessThanSixMonths = (start: Date, end: Date) => {
     // `+date` gives the date in milliseconds
     const duration = +end - +start;
     return duration < SIX_MONTHS_IN_MILLISECONDS;
+};
+
+export const isDateLessThanSixMonthsFrom = (referenceDate: string) => (date: string) => {
+    const referenceDateMinusSixMonths = addDaysToDate(-365 / 2, referenceDate);
+    return date > referenceDateMinusSixMonths;
+};
+
+export const getDescendingDatesBetween = (from: string, to: string) => {
+    const dates: string[] = [];
+    let date = to;
+
+    while (date >= from) {
+        dates.push(date);
+        date = addDaysToDate(-1, date);
+    }
+
+    return dates;
 };

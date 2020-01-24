@@ -11,7 +11,7 @@ import {
   computeMinMaxBalanceBackwards,
   filterLessThanSixMonthsTxs,
   filterPositiveTxs,
-  sortAscTxsByTimestamp,
+  sortTxsByTimestamp,
   convertDateObjectToDate,
   addDaysToDate,
   isDurationLongerThanThreeYears,
@@ -96,7 +96,7 @@ export class AppService {
 
   async getAllTxsSorted(accounts: AccountDto[]): Promise<TxDto[]> {
     const allTxs = await this.fetchAllTxs(accounts);
-    return allTxs.sort(sortAscTxsByTimestamp);
+    return allTxs.sort(sortTxsByTimestamp('asc'));
   }
 
   getMinMaxBalance(allTxsSorted: TxDto[], accounts: AccountDto[]): number[] {

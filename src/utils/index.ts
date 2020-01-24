@@ -3,13 +3,17 @@ export {
   computeMinMaxBalanceBackwards,
   filterLessThanSixMonthsTxs,
   filterPositiveTxs,
-  sortAscTxsByTimestamp,
+  filterTxsOfDate,
+  sortTxsByTimestamp,
 } from './tx.utils';
 
 export {
+  convertTimestampToDate,
   convertDateObjectToDate,
   addDaysToDate,
   isDurationLongerThanThreeYears,
+  isDateLessThanSixMonthsFrom,
+  getDescendingDatesBetween,
 } from './date.utils';
 
 export {
