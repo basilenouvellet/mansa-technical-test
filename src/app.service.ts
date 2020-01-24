@@ -1,13 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import fetch from 'node-fetch';
-import { AccountDto, AnswerDto, TxDto } from './dtos';
+import {
+  TxDto,
+  AnswerDto,
+  AccountDto,
+  AnswerVerifyDto,
+} from './dtos';
 import {
   computeAverageAmount,
   computeMinMaxBalanceBackwards,
   filterLessThanSixMonthsTxs,
   filterPositiveTxs,
   sortAscTxsByTimestamp,
-  SIX_MONTHS_IN_MILLISECONDS,
+  convertDateObjectToDate,
+  addDaysToDate,
+  isDurationLongerThanThreeYears,
+  flattenNestedArrayOfDepthOne,
 } from './utils';
 
 const BASE_URL = 'https://kata.getmansa.com';
@@ -29,8 +37,7 @@ export class AppService {
     };
   }
 
-  // async getAnswerVerify(): Promise<{ 'answer': string }> {
-  async getAnswerVerify(): Promise<any> {
+  async getAnswerVerify(): Promise<AnswerVerifyDto> {
     const answer = await this.getAnswer();
 
     return await this._fetchJson('/answer', {
@@ -44,23 +51,52 @@ export class AppService {
     return this._fetchJson('/accounts');
   }
 
-  fetchAllTxs(anyAccountId: string): Promise<{ [accountId: string]: TxDto[] }> {
-    return this._fetchJson(`/accounts/${anyAccountId}/transactions?all=true`);
+  async fetchAllTxs(accounts: AccountDto[]): Promise<TxDto[]> {
+    const promisesArray = accounts
+      .map(async account => {
+        const { account_id } = account;
+
+        const oldestTx = await this.fetchOldestTx(account_id);
+
+        const oldestTxDateObject = new Date(oldestTx.timestamp);
+
+        let txs: TxDto[] = [];
+
+        const todayDateObject = new Date();
+        const todayDate = convertDateObjectToDate(todayDateObject);
+
+        let from = convertDateObjectToDate(oldestTxDateObject);
+        let to = addDaysToDate(365, from);
+
+        do {
+          const partialTxs = await this.fetchTxs(account_id, from, to);
+
+          txs = [...txs, ...partialTxs];
+
+          from = addDaysToDate(1, to);
+          to = addDaysToDate(365, from);
+        } while (from <= todayDate);
+
+        return txs;
+      });
+
+    const nestedAllTxs = await Promise.all(promisesArray);
+
+    // Array.flat or Array.flatMap only available in Node v11+
+    return flattenNestedArrayOfDepthOne(nestedAllTxs);
   }
 
-  // fetchTxs(accountId: string, from: string, to: string): Promise<TxDto[]> {
-    // return this._fetchJson(`/accounts/${accountId}/transactions?from=${from}&to=${to}`);
-  // }
+  fetchOldestTx(accountId: string): Promise<TxDto> {
+    return this._fetchJson(`/accounts/${accountId}/transactions`);
+  }
+
+  fetchTxs(accountId: string, from: string, to: string): Promise<TxDto[]> {
+    return this._fetchJson(`/accounts/${accountId}/transactions?from=${from}&to=${to}`);
+  }
 
   async getAllTxsSorted(accounts: AccountDto[]): Promise<TxDto[]> {
-    const anyAccountId = accounts[0].account_id;
-    const allTxs = await this.fetchAllTxs(anyAccountId);
-
-    const aggregateTxs = (acc: TxDto[], accountTxs: TxDto[]) => [...acc, ...accountTxs];
-
-    return Object.values(allTxs)
-      .reduce(aggregateTxs, [])
-      .sort(sortAscTxsByTimestamp);
+    const allTxs = await this.fetchAllTxs(accounts);
+    return allTxs.sort(sortAscTxsByTimestamp);
   }
 
   getMinMaxBalance(allTxsSorted: TxDto[], accounts: AccountDto[]): number[] {
@@ -95,11 +131,7 @@ export class AppService {
     const mostRecentTxDate = new Date(allTxsSorted[0].timestamp);
     const oldestTxDate = new Date(allTxsSorted[allTxsSorted.length - 1].timestamp);
 
-    // `+date` gives the date in milliseconds
-    const userActivityDurationInMilliseconds = +mostRecentTxDate - +oldestTxDate;
-
-    const THREE_YEARS_IN_MILLISECONDS = 6 * SIX_MONTHS_IN_MILLISECONDS;
-    return userActivityDurationInMilliseconds > THREE_YEARS_IN_MILLISECONDS;
+    return isDurationLongerThanThreeYears(oldestTxDate, mostRecentTxDate);
   }
 
   async _fetchJson(endpoint: string, ...args): Promise<any> {

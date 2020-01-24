@@ -1,6 +1,5 @@
 import { TxDto } from '../dtos';
-
-export const SIX_MONTHS_IN_MILLISECONDS = 15778800000;
+import { isDurationLessThanSixMonths } from './dates.utils';
 
 export const computeAverageAmount = (
   acc: number,
@@ -27,9 +26,7 @@ export const computeMinMaxBalanceBackwards = (
 
 export const filterLessThanSixMonthsTxs = (mostRecentTxDate: Date) => (tx: TxDto) => {
   const txDate = new Date(tx.timestamp);
-
-  // `+date` gives the date in milliseconds
-  return +txDate > (+mostRecentTxDate - SIX_MONTHS_IN_MILLISECONDS);
+  return isDurationLessThanSixMonths(txDate, mostRecentTxDate);
 };
 
 export const filterPositiveTxs = (tx: TxDto) => tx.amount > 0;

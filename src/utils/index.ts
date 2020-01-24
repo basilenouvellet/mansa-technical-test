@@ -4,5 +4,14 @@ export {
   filterLessThanSixMonthsTxs,
   filterPositiveTxs,
   sortAscTxsByTimestamp,
-  SIX_MONTHS_IN_MILLISECONDS,
 } from './txs.utils';
+
+export {
+  convertDateObjectToDate,
+  addDaysToDate,
+  isDurationLongerThanThreeYears,
+} from './dates.utils';
+
+export {
+  flattenNestedArrayOfDepthOne,
+} from './array.utils';
