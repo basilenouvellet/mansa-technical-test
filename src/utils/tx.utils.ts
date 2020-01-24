@@ -1,5 +1,5 @@
 import { TxDto } from '../dtos';
-import { isDurationLessThanSixMonths } from './dates.utils';
+import { isDurationLessThanSixMonths } from './date.utils';
 
 export const computeAverageAmount = (
   acc: number,
@@ -18,8 +18,8 @@ export const computeMinMaxBalanceBackwards = (
   // amount can be + or -
   const previousBalance = balance - tx.amount;
 
-  const updatedMin = Math.min(min, balance);
-  const updatedMax = Math.max(max, balance);
+  const updatedMin = Math.min(min, previousBalance);
+  const updatedMax = Math.max(max, previousBalance);
 
   return [updatedMin, updatedMax, previousBalance];
 };

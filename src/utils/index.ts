@@ -4,13 +4,13 @@ export {
   filterLessThanSixMonthsTxs,
   filterPositiveTxs,
   sortAscTxsByTimestamp,
-} from './txs.utils';
+} from './tx.utils';
 
 export {
   convertDateObjectToDate,
   addDaysToDate,
   isDurationLongerThanThreeYears,
-} from './dates.utils';
+} from './date.utils';
 
 export {
   flattenNestedArrayOfDepthOne,

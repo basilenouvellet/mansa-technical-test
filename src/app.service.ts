@@ -104,7 +104,7 @@ export class AppService {
 
     const [minBalance, maxBalance] = allTxsSorted.reduce(
       computeMinMaxBalanceBackwards,
-      [0, 0, currentBalanceAggregated],
+      [currentBalanceAggregated, currentBalanceAggregated, currentBalanceAggregated],
     );
 
     // unary operator `+` transforms a string to a number
